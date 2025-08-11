@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>تتبع الطلب - ساحل</title>
+  <link rel="stylesheet" href="/assets/css/style.css">
+</head>
+<body>
+<header>
+  <div class="container nav">
+    <div><a href="/">ساحل</a></div>
+  </div>
+</header>
+<main class="container">
+  <h1>تتبع الطلب</h1>
+  <form action="/order-tracking.html" method="get" class="search-bar">
+    <input name="orderId" placeholder="رقم الطلب" value="">
+    <button class="btn" type="submit">تتبع</button>
+  </form>
+  <ol id="timeline"></ol>
+</main>
+<script src="/assets/js/tracking.js"></script>
+</body>
+</html>

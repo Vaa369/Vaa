@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>تسجيل الدخول - ساحل</title>
+  <link rel="stylesheet" href="/assets/css/style.css">
+</head>
+<body>
+<header>
+  <div class="container nav">
+    <div><a href="/">ساحل</a></div>
+  </div>
+</header>
+<main class="container">
+  <h1>تسجيل الدخول</h1>
+  <form id="login-form">
+    <input name="email" placeholder="البريد الإلكتروني" required type="email">
+    <input name="password" placeholder="كلمة المرور" required type="password">
+    <input name="otpCode" placeholder="رمز 2FA (إذا طُلب)" type="text">
+    <button class="btn" type="submit">دخول</button>
+  </form>
+  <div id="msg"></div>
+  <p>ليس لديك حساب؟ <a href="/register.html">إنشاء حساب</a></p>
+</main>
+<script>
+async function login(email,password,otpCode){
+  const res = await fetch('/api/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,password,otpCode})});
+  const data = await res.json();
+  if(!res.ok){ throw Object.assign(new Error(data.message||'فشل الدخول'),{requires2fa:data.requires2fa}); }
+  return data;
+}
+
+document.getElementById('login-form').addEventListener('submit', async (e)=>{
+  e.preventDefault();
+  const fd=new FormData(e.target);
+  const email=fd.get('email');
+  const password=fd.get('password');
+  const otpCode=fd.get('otpCode');
+  const msg=document.getElementById('msg');
+  try{
+    await login(email,password,otpCode);
+    msg.textContent='تم تسجيل الدخول بنجاح';
+  }catch(err){
+    if(err.requires2fa){ msg.textContent='يجب إدخال رمز 2FA من تطبيق المصادقة'; }
+    else msg.textContent=err.message;
+  }
+});
+</script>
+</body>
+</html>

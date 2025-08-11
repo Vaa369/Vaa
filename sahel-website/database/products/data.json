@@ -1,0 +1,6 @@
+[
+  {"id":"p1","name":"كتاب حكايات من الساحل","description":"قصص صيفية ممتعة","price":150,"category":"كتب","images":["/assets/images/book1.jpg"]},
+  {"id":"p2","name":"أنتيك قديم من النحاس","description":"قطعة أنتيك مصرية أصيلة","price":950,"category":"أنتيكات","images":["/assets/images/antique1.jpg"]},
+  {"id":"p3","name":"هدية يدوية - سوار خرز","description":"مصنوع يدويًا من حرفيين محليين","price":120,"category":"هدايا يدوية","images":["/assets/images/gift1.jpg"]},
+  {"id":"p4","name":"كتاب عن البحر","description":"سير ذاتية وإلهام","price":180,"category":"كتب","images":["/assets/images/book2.jpg"]}
+]
