@@ -1,1 +1,3 @@
-[]
+[
+  {"id":"admin1","fullName":"Admin","email":"admin@sahel.local","phone":"","address":"","role":"admin","otpEnabled":false,"otpSecret":null,"createdAt":"2025-08-11T19:32:19+00:00","passwordHash":"$2b$10$RLdopk62GzOzRCFjIj7Ma.J5vvyKpmoYP/6koN/bZhFkjY5vXIUpu"}
+]

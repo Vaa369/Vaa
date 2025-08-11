@@ -1,6 +1,7 @@
 const path = require('path');
 const fs = require('fs/promises');
 const express = require('express');
+const { auth, requireRole } = require('./_auth');
 
 const router = express.Router();
 const ORDERS_PATH = path.join(__dirname, '..', 'database', 'orders', 'data.json');
@@ -53,15 +54,29 @@ router.get('/:id', async (req, res, next) => {
   }
 });
 
-router.get('/', async (req, res, next) => {
+router.get('/', auth, async (req, res, next) => {
   try {
-    const { userId } = req.query;
+    const { userId, status } = req.query;
     let orders = await readOrders();
     if (userId) orders = orders.filter((o) => o.userId === userId);
+    if (status) orders = orders.filter((o) => o.status === status);
     res.json(orders);
   } catch (e) {
     next(e);
   }
+});
+
+router.patch('/:id/status', auth, requireRole(['admin']), async (req, res, next) => {
+  try {
+    const { status, note } = req.body;
+    const orders = await readOrders();
+    const i = orders.findIndex((o) => String(o.id) === String(req.params.id));
+    if (i === -1) return res.status(404).json({ message: 'Not found' });
+    orders[i].status = status || orders[i].status;
+    (orders[i].tracking = orders[i].tracking || []).push({ status: orders[i].status, at: new Date().toISOString(), note: note || '' });
+    await writeOrders(orders);
+    res.json(orders[i]);
+  } catch (e) { next(e); }
 });
 
 module.exports = router;

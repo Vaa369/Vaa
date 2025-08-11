@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>إدارة الطلبات - ساحل</title>
+  <link rel="stylesheet" href="/assets/css/style.css">
+  <link rel="stylesheet" href="/assets/css/admin.css">
+</head>
+<body>
+<header>
+  <div class="container nav">
+    <div><a href="/admin/dashboard.html">لوحة التحكم</a></div>
+  </div>
+</header>
+<main class="container">
+  <h1>الطلبات</h1>
+  <table id="admin-orders" style="width:100%"></table>
+</main>
+<script>
+async function fetchJSON(url,opts){const r=await fetch(url,opts);const d=await r.json();if(!r.ok) throw new Error(d.message||'Error');return d;}
+async function load(){
+  const t=document.getElementById('admin-orders');
+  const orders = await fetchJSON('/api/orders');
+  t.innerHTML = `<tr><th>رقم</th><th>الحالة</th><th>الإجمالي</th><th>إجراءات</th></tr>` + orders.map(o=>`
+    <tr>
+      <td>${o.id}</td>
+      <td>${o.status}</td>
+      <td>${new Intl.NumberFormat('ar-EG',{style:'currency',currency:'EGP'}).format(o.total)}</td>
+      <td>
+        <select data-id='${o.id}'>
+          <option ${o.status==='processing'?'selected':''}>processing</option>
+          <option ${o.status==='paid'?'selected':''}>paid</option>
+          <option ${o.status==='delivered'?'selected':''}>delivered</option>
+          <option ${o.status==='canceled'?'selected':''}>canceled</option>
+        </select>
+        <button data-save='${o.id}'>حفظ</button>
+      </td>
+    </tr>`).join('');
+}
+
+document.addEventListener('click',async (e)=>{
+  const id=e.target.getAttribute('data-save');
+  if(id){
+    const sel=document.querySelector(`select[data-id='${id}']`);
+    await fetchJSON(`/api/orders/${id}/status`,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({status:sel.value})});
+    alert('تم التحديث'); load();
+  }
+});
+
+document.addEventListener('DOMContentLoaded',load);
+</script>
+</body>
+</html>
