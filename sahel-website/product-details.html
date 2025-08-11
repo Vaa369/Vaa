@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>تفاصيل المنتج - ساحل</title>
+  <link rel="stylesheet" href="/assets/css/style.css">
+</head>
+<body>
+<header>
+  <div class="container nav">
+    <div><a href="/">ساحل</a></div>
+    <nav>
+      <a href="/store.html">المتجر</a>
+      <a href="/cart.html">السلة</a>
+    </nav>
+  </div>
+</header>
+<main class="container" id="content">
+  <h1>تفاصيل المنتج</h1>
+  <div id="product"></div>
+</main>
+<footer>
+  <div class="container">© 2025 ساحل</div>
+</footer>
+<script>
+async function fetchJSON(u){const r=await fetch(u);return r.json();}
+function addToCart(product, qty=1){
+  const cart = JSON.parse(localStorage.getItem('sahel_cart')||'[]');
+  const i = cart.findIndex(c=>c.id===product.id);
+  if(i>=0) cart[i].qty += qty; else cart.push({id:product.id,name:product.name,price:product.price,qty});
+  localStorage.setItem('sahel_cart', JSON.stringify(cart));
+  alert('تم إضافة المنتج إلى السلة');
+}
+(async()=>{
+  const id = new URLSearchParams(location.search).get('id');
+  if(!id) return;
+  const p = await fetchJSON(`/api/products/${id}`);
+  document.getElementById('product').innerHTML = `
+    <div class="card" style="text-align:right">
+      <img src="${(p.images&&p.images[0])||'/assets/images/placeholder.svg'}" onerror="this.src='/assets/images/placeholder.svg'" alt="${p.name}" style="height:280px">
+      <h2>${p.name}</h2>
+      <p>${p.description||''}</p>
+      <p><strong>${new Intl.NumberFormat('ar-EG',{style:'currency',currency:'EGP'}).format(p.price)}</strong></p>
+      <button id="add-to-cart">أضف إلى السلة</button>
+    </div>`;
+  document.getElementById('add-to-cart').addEventListener('click',()=>addToCart(p,1));
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>السلة - ساحل</title>
+  <link rel="stylesheet" href="/assets/css/style.css">
+</head>
+<body>
+<header>
+  <div class="container nav">
+    <div><a href="/">ساحل</a></div>
+    <nav>
+      <a href="/store.html">المتجر</a>
+      <a href="/checkout.html">الدفع</a>
+    </nav>
+  </div>
+</header>
+<main class="container">
+  <h1>سلة التسوق</h1>
+  <div id="cart-items" class="grid"></div>
+  <h3 id="total"></h3>
+  <a class="btn" href="/checkout.html">إتمام الشراء</a>
+</main>
+<footer>
+  <div class="container">© 2025 ساحل</div>
+</footer>
+<script>
+function getCart(){try{return JSON.parse(localStorage.getItem('sahel_cart')||'[]')}catch{return []}}
+function setCart(c){localStorage.setItem('sahel_cart',JSON.stringify(c))}
+function render(){
+  const c=getCart();
+  const container=document.getElementById('cart-items');
+  container.innerHTML=c.map((i,idx)=>`
+    <div class='card'>
+      <h3>${i.name}</h3>
+      <p>السعر: ${new Intl.NumberFormat('ar-EG',{style:'currency',currency:'EGP'}).format(i.price)}</p>
+      <div>
+        الكمية: <input type='number' min='1' value='${i.qty}' data-idx='${idx}' style='width:80px'>
+        <button data-remove='${idx}'>حذف</button>
+      </div>
+    </div>`).join('');
+  document.getElementById('total').textContent = 'الإجمالي: ' + new Intl.NumberFormat('ar-EG',{style:'currency',currency:'EGP'}).format(c.reduce((s,i)=>s+i.price*i.qty,0));
+}
+
+document.addEventListener('input',(e)=>{
+  const idx=e.target.getAttribute('data-idx');
+  if(idx!==null){ const c=getCart(); c[idx].qty=Number(e.target.value||1); setCart(c); render(); }
+});
+document.addEventListener('click',(e)=>{
+  const idx=e.target.getAttribute('data-remove');
+  if(idx!==null){ const c=getCart(); c.splice(Number(idx),1); setCart(c); render(); }
+});
+
+document.addEventListener('DOMContentLoaded',render);
+</script>
+</body>
+</html>

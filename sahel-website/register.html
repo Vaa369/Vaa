@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>إنشاء حساب - ساحل</title>
+  <link rel="stylesheet" href="/assets/css/style.css">
+</head>
+<body>
+<header>
+  <div class="container nav">
+    <div><a href="/">ساحل</a></div>
+  </div>
+</header>
+<main class="container">
+  <h1>إنشاء حساب</h1>
+  <form id="reg-form">
+    <input name="fullName" placeholder="الاسم الكامل" required>
+    <input name="email" placeholder="البريد الإلكتروني" required type="email">
+    <input name="phone" placeholder="رقم الموبايل" required>
+    <input name="address" placeholder="العنوان" required>
+    <input name="password" placeholder="كلمة المرور" required type="password">
+    <button class="btn" type="submit">تسجيل</button>
+  </form>
+  <div id="twofa-setup" style="display:none">
+    <h3>تفعيل المصادقة الثنائية</h3>
+    <img id="qr" alt="QR">
+    <form id="twofa-verify">
+      <input name="token" placeholder="أدخل الرمز من التطبيق">
+      <button class="btn" type="submit">تفعيل</button>
+    </form>
+  </div>
+  <div id="msg"></div>
+</main>
+<script>
+async function post(url,body){const r=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});const d=await r.json(); if(!r.ok) throw new Error(d.message||'Error'); return d;}
+const emailInput = document.querySelector('#reg-form input[name=email]');
+
+document.getElementById('reg-form').addEventListener('submit', async (e)=>{
+  e.preventDefault();
+  const fd = new FormData(e.target);
+  const body = Object.fromEntries(fd.entries());
+  try{ await post('/api/auth/register', body); document.getElementById('msg').textContent='تم إنشاء الحساب';
+    const setup = await post('/api/auth/2fa/setup',{email: body.email});
+    document.getElementById('twofa-setup').style.display='block';
+    document.getElementById('qr').src = setup.qr;
+  }catch(err){ document.getElementById('msg').textContent=err.message; }
+});
+
+document.getElementById('twofa-verify').addEventListener('submit', async (e)=>{
+  e.preventDefault();
+  const token = new FormData(e.target).get('token');
+  try{ await post('/api/auth/2fa/verify',{email: emailInput.value, token}); document.getElementById('msg').textContent='تم تفعيل 2FA'; }
+  catch(err){ document.getElementById('msg').textContent=err.message; }
+});
+</script>
+</body>
+</html>

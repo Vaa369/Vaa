@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>المتجر - ساحل</title>
+  <link rel="stylesheet" href="/assets/css/style.css">
+</head>
+<body>
+<header>
+  <div class="container nav">
+    <div><a href="/">ساحل</a></div>
+    <nav>
+      <a href="/store.html">المتجر</a>
+      <a href="/search.html">بحث</a>
+      <a href="/order-tracking.html">تتبع الطلب</a>
+    </nav>
+  </div>
+</header>
+<main class="container">
+  <h1>المتجر</h1>
+  <form action="/search.html" method="get" class="search-bar">
+    <input id="search-input" name="q" placeholder="ابحث عن المنتجات">
+    <button class="btn" type="submit">بحث</button>
+    <button class="btn" type="button" onclick="startVoiceSearch()">🎤</button>
+  </form>
+  <ul id="suggestions"></ul>
+  <div id="results" class="grid" style="margin-top:16px"></div>
+</main>
+<footer>
+  <div class="container">© 2025 ساحل</div>
+</footer>
+<script src="/assets/js/voice-search.js"></script>
+<script src="/assets/js/search.js"></script>
+</body>
+</html>
